@@ -46,6 +46,9 @@ const userName2 = document.getElementById('userName2');
 const userFollower2 = document.getElementById('userFollower2');
 const starCount2 = document.getElementById('starCount2');
 
+const battleErrorMessage = document.getElementById('battleErrorMessage');
+const battleLoadingSpinner = document.getElementById('battleLoadingSpinner');
+
 /**
  * Switch between Search Mode and Battle Mode
  * @param {string} mode - Either 'search' or 'battle'
@@ -93,16 +96,20 @@ function handleBattleSearch(e) {
     
     // Validate both inputs are not empty
     if (!username1 || !username2) {
-        showError('Please enter both usernames');
+        showBattleError('Please enter both usernames!');
         return;
     }
     
     // Validate they're not the same
     if (username1.toLowerCase() === username2.toLowerCase()) {
-        showError('Please enter two different usernames');
+        showBattleError('Please enter two different usernames!');
         return;
     }
+    clearBattleUI();
     
+    // Clear inputs
+    battleInput1.value = '';
+    battleInput2.value = '';
     // Start the battle!
     fetchBothUsers(username1, username2);
 }
@@ -117,7 +124,7 @@ battleForm.addEventListener('submit', handleBattleSearch);
  */
 async function fetchBothUsers(username1, username2) {
     try {
-        showLoading();
+        showBattleLoading();
         
         // Fetch BOTH users at the same time using Promise.all()
         // This is much faster than fetching one, then the other
@@ -128,25 +135,25 @@ async function fetchBothUsers(username1, username2) {
         
         // Check if both users exist (no 404 errors)
         if (!user1 || user1.message === 'Not Found') {
-            hideLoading();
-            showError(`❌User "${username1}" not found`);
+            hideBattleLoading();
+            showBattleError(`❌User "${username1}" not found`);
             return; 
         }
         
         if (!user2 || user2.message === 'Not Found') {
-            hideLoading();
-            showError(`❌ User "${username2}" not found`);
+            hideBattleLoading();
+            showBattleError(`❌ User "${username2}" not found`);
             return;
         }
         
-        hideLoading();
+        hideBattleLoading();
         
         // Now fetch repos for both and compare
         await comparePlayers(user1, user2);
         
     } catch (error) {
-        hideLoading();
-        showError('❌ Network error. Please try again.');
+        hideBattleLoading();
+        showBattleError('❌ Network error. Please try again.');
         console.error(error);
     }
 }
@@ -180,13 +187,13 @@ async function calculateTotalStars(reposUrl) {
  */
 async function comparePlayers(user1, user2) {
     try {
-        showLoading();
+        showBattleLoading();
         
         // Calculate total stars for both users
         const stars1 = await calculateTotalStars(user1.repos_url);
         const stars2 = await calculateTotalStars(user2.repos_url);
         
-        hideLoading();
+        hideBattleLoading();
             
         const player1Wins = stars1 > stars2;
         const player2Wins = stars2 > stars1;
@@ -196,8 +203,8 @@ async function comparePlayers(user1, user2) {
         displayBattleResults(user1, user2, stars1, stars2, player1Wins, player2Wins, isTie);
         
     } catch (error) {
-        hideLoading();
-        showError('Error comparing players');
+        hideBattleLoading();
+        showBattleError('Error comparing players');
         console.error(error);
     }
 }
@@ -282,7 +289,7 @@ function handleSearch(){
         alert("Please Enter username")
         return;
     }
-   
+    clearSearchUI();
     fetchUserData(username)
 }
 
@@ -411,6 +418,19 @@ function showError(message){
     loadingSpinner.classList.add('hidden');
 }
 
+function showBattleLoading() {
+    battleLoadingSpinner.classList.remove('hidden');
+}
+
+function hideBattleLoading(){
+    battleLoadingSpinner.classList.add('hidden');
+}
+function showBattleError(message) {
+    battleErrorMessage.textContent = message;
+    battleErrorMessage.classList.remove('hidden');
+    battleLoadingSpinner.classList.add('hidden');
+}
+
 function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -420,5 +440,99 @@ function formatDate(dateString) {
     });
 }
 
+/**
+ * CLEAR UI FUNCTIONS FOR BOTH MODES
+ * These functions reset the UI to a clean state before starting a new search/battle
+ */
+ 
+/**
+ * Clear UI for SEARCH MODE
+ * Hides all search-related messages and results
+ * Called at the start of handleSearch()
+ */
+function clearSearchUI() {
+    // Hide error message
+    const errorMessage = document.getElementById('errorMessage');
+    errorMessage.classList.add('hidden');
+    errorMessage.textContent = '';
+    
+    // Hide loading spinner
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    loadingSpinner.classList.add('hidden');
+    
+    // Hide profile card
+    const profileCard = document.getElementById('profileCard');
+    profileCard.classList.add('hidden');
+    
+    // Hide repositories container (if it exists)
+    const reposContainer = document.getElementById('reposContainer');
+    if (reposContainer) {
+        reposContainer.classList.add('hidden');
+    }
+    
+    // Focus back on search input for user convenience
+    const searchInput = document.getElementById('searchInput');
+    searchInput.focus();
+}
+ 
+/**
+ * Clear UI for BATTLE MODE
+ * Hides all battle-related messages and results
+ * Called at the start of handleBattleSearch()
+ */
+function clearBattleUI() {
+    // Hide error message
+    const battleErrorMessage = document.getElementById('battleErrorMessage');
+    if (battleErrorMessage) {
+        battleErrorMessage.classList.add('hidden');
+        battleErrorMessage.textContent = '';
+    }
+    
+    // Hide loading spinner
+    const battleLoadingSpinner = document.getElementById('battleLoadingSpinner');
+    if (battleLoadingSpinner) {
+        battleLoadingSpinner.classList.add('hidden');
+    }
+    
+    // Hide battle results
+    const battleResults = document.getElementById('battleResults');
+    if (battleResults) {
+        battleResults.classList.add('hidden');
+    }
+    
+    // Hide both player cards
+    const profileCard1 = document.getElementById('profileCard1');
+    const profileCard2 = document.getElementById('profileCard2');
+    
+    if (profileCard1) {
+        profileCard1.classList.add('hidden');
+        profileCard1.classList.remove('winner', 'loser');
+    }
+    
+    if (profileCard2) {
+        profileCard2.classList.add('hidden');
+        profileCard2.classList.remove('winner', 'loser');
+    }
+    
+    // Clear badge text and classes
+    const badge1 = document.getElementById('badge1');
+    const badge2 = document.getElementById('badge2');
+    
+    if (badge1) {
+        badge1.textContent = '';
+        badge1.className = 'badge';
+    }
+    
+    if (badge2) {
+        badge2.textContent = '';
+        badge2.className = 'badge';
+    }
+    
+    // Focus on first input for user convenience
+    const battleInput1 = document.getElementById('battleInput1');
+    if (battleInput1) {
+        battleInput1.focus();
+    }
+}
 
 console.log('Level 3 JavaScript loaded - Ready for Battle Mode!');
