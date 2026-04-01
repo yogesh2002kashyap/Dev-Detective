@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev-Detective - Level 3</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Dev-Detective</h1>
+            <p>Search for GitHub developers and compare them</p>
+        </header>
+
+            <button id="searchTabBtn" class="tab-btn active">Search</button>
+            <button id="battleTabBtn" class="tab-btn">Battle Mode</button>
+
+        <div id="searchMode" class="mode-section active">
+            <form action="" id="searchForm">    
+                    <input 
+                        type="text" 
+                        placeholder="Search GitHub username (e.g., octocat)" 
+                        id="searchInput"
+                        required
+                        >
+                    <button type="submit">Search</button>
+            </form>
+
+            <div id="errorMessage" class="hidden"></div>
+
+            <div id="loadingSpinner" class="hidden">
+                <div class="spinner"></div>
+                <p>Loading...</p>
+            </div>
+
+            <div id="profileCard" class="hidden">
+                <img id="profileImage"  alt="Avatar Image">
+                <h2 id="userName"></h2>
+                <p id="userBio"></p>
+                <p id="joinDate"></p>
+                <a href=""  id="portfolioUrl"></a>
+            </div>
+
+            <div id="reposContainer" class="hidden">
+                <h3>Top 5 Latest Repositories</h3>
+                <ul id="reposList"></ul>
+            </div>
+        </div>
+
+        
+        <!-- IMPROVED BATTLE MODE HTML -->
+
+<div id="battleMode" class="mode-section hidden">
+    <!-- Battle Form -->
+    <form id="battleForm" class="battle-form">
+        <div class="battle-inputs">
+            <input 
+                type="text" 
+                id="battleInput1"
+                placeholder="Enter Player 1 username"
+                required
+            >
+            <button type="submit" class="battle-btn">⚔️ Start Battle</button>
+            <input 
+                type="text" 
+                id="battleInput2"
+                placeholder="Enter Player 2 username"
+                required
+            >
+        </div>
+    </form>
+
+        <div id="errorMessage" class="hidden"></div>
+
+            <div id="loadingSpinner" class="hidden">
+                <div class="spinner"></div>
+                <p>Loading...</p>
+            </div>
+
+    <!-- Battle Results (Hidden by default) -->
+    <div id="battleResults" class="hidden">
+        <!-- Comparison Title -->
+        <h3 id="comparisonTitle" class="battle-title"></h3>
+        
+        <!-- Battle Cards -->
+        <div id="battleCards" class="battle-cards">
+            <!-- Player 1 Card -->
+            <div id="profileCard1" class="battle-card hidden">
+                <div class="badge" id="badge1"></div>
+                <img id="profileImage1" alt="Player 1 Avatar">
+                <h2 id="userName1"></h2>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-label">👥 Followers</span>
+                        <span class="stat-value" id="userFollower1">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">⭐ Total Stars</span>
+                        <span class="stat-value" id="starCount1">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Player 2 Card -->
+            <div id="profileCard2" class="battle-card hidden">
+                <div class="badge" id="badge2"></div>
+                <img id="profileImage2" alt="Player 2 Avatar">
+                <h2 id="userName2"></h2>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-label">👥 Followers</span>
+                        <span class="stat-value" id="userFollower2">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">⭐ Total Stars</span>
+                        <span class="stat-value" id="starCount2">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
